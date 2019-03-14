@@ -1,3 +1,8 @@
 runtime: python37
-api_version: 1
-threadsafe: true
+
+handlers:
+  - url: /.*
+    script: auto
+
+beta_settings:
+  cloud_sql_instances: united-triode-233023:us-east1:database

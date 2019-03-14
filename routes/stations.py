@@ -2,6 +2,16 @@ from flask import Flask, request, Blueprint
 
 StationRouter = Blueprint('stations', __name__, url_prefix='/stations')
 
+# TRAIN_LINE 
+# Possible values:
+# ----
+
+# timeSpan
+# Possible Values:
+# 'YEAR' - Year To Date
+# 'MONT' - Last 28 Days
+# 'WEEK' - Week To Date
+
 @StationRouter.route('/nearby', methods=['GET'])
 def nearby_stations():
     lat = request.args.get('latitude')

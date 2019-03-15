@@ -7,15 +7,17 @@ from flask import Flask
 from flask_restful import Api, Resource, reqparse, abort
 import logging
 
+# Create App Instance and associate with API
 app = Flask(__name__)
 api = Api(app)
 
 logger = logging.getLogger()
 
-
+# Load Environment Variables
 load_dotenv('.flaskenv')
 load_dotenv('.env')
 
+# Generate Google Cloud SQL connection pool
 db_user = getenv('DB_USER')
 db_pass = getenv('DB_PASS')
 db_name = getenv('DB_NAME')
@@ -50,12 +52,12 @@ db = sqlalchemy.create_engine(
 # 'MONT' - Last 28 Days
 # 'WEEK' - Week To Date
 
-
+# Main API Interface
 class ServerApi(Resource):
     def get(self):
         with db.connect() as conn:
             conn.execute('select * from crime_info limit 1')
         return 1
 
-
+# Append routes to the API
 api.add_resource(ServerApi, '/')

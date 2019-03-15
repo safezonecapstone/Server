@@ -1,12 +1,14 @@
 # Setup
 
-After cloning the repo, in the folder execute these commands :
+After cloning the repo, in the folder execute these commands:
+   
+```
+virtualvenv venv
 
-    `virtualvenv venv`
+source venv/bin/activate
 
-    `source venv/bin/activate`
-
-    `pip install -r requirements.txt`
+pip install -r requirements.txt
+```
 
 ## Setting Environment Variables
 
@@ -39,15 +41,14 @@ Set Credentials in .env
 - If the port is in use change the port in the above command to anything else and in the `__init__.py` of the **server** folder change the port value in this snippet:
 
   ```
-      sqlalchemy.engine.url.URL(
-          drivername='postgres',
-          username = db_user,
-          password = db_pass,
-          database = db_name,
-          host='127.0.0.1',
-          port='5234'
-      ),
-
+    sqlalchemy.engine.url.URL(
+        drivername='postgres',
+        username = db_user,
+        password = db_pass,
+        database = db_name,
+        host='127.0.0.1',
+        port='5234'
+    ),
   ```
 
 * You can then run the server locally by issuing the command

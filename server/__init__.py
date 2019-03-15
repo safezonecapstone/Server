@@ -22,7 +22,7 @@ db_name = getenv('DB_NAME')
 
 db = sqlalchemy.create_engine(
     sqlalchemy.engine.url.URL(
-        drivername='postgres',
+        drivername='postgres+pg8000',
         username=db_user,
         password=db_pass,
         database=db_name,

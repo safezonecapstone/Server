@@ -36,7 +36,7 @@ Set Credentials in .env
 
 - Run the cloud_sql_proxy executable by:
 
-  `[LINUX/MAC]./cloud_sql_proxy | [WINDOWS] cloud_sql_proxy.exe -instances=united-triode-233023:us-east1:database=tcp:5432`
+  `[LINUX/MAC]./cloud_sql_proxy | [WINDOWS] cloud_sql_proxy.exe -instances=united-triode-233023:us-east1:database=tcp:5234`
 
 - If the port is in use change the port in the above command to anything else and in the `__init__.py` of the **server** folder change the port value in this snippet:
 

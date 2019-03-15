@@ -2,7 +2,7 @@ from flask import Flask, request, Blueprint
 
 StationRouter = Blueprint('stations', __name__, url_prefix='/stations')
 
-# TRAIN_LINE 
+# TRAIN_LINE
 # Possible values:
 # ----
 
@@ -12,12 +12,13 @@ StationRouter = Blueprint('stations', __name__, url_prefix='/stations')
 # 'MONT' - Last 28 Days
 # 'WEEK' - Week To Date
 
+
 @StationRouter.route('/nearby', methods=['GET'])
 def nearby_stations():
     lat = request.args.get('latitude')
     lon = request.args.get('longitude')
     station_filter = request.args.get('filter')
-    # Expects 
+    # Expects
     # {
     #   latitude:   FLOAT
     #   longitude:  FLOAT
@@ -27,4 +28,3 @@ def nearby_stations():
         <h1>TESTING nearby_stations</h1>
         <p>Received Latitude: {}, Longitude: {}, Filter: {}</p>
         '''.format(lat, lon, station_filter)
-

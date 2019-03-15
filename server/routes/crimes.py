@@ -20,6 +20,7 @@ CrimeRouter = Blueprint('crimes', __name__, url_prefix='/crimes')
 #   timeSpan:  STRING              Possible Values Listed Above
 # }
 
+
 @CrimeRouter.route('/nearby', methods=['GET'])
 def nearby_crimes():
     lat = request.args.get('latitude')

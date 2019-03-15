@@ -5,4 +5,4 @@ handlers:
     script: auto
 
 beta_settings:
-  cloud_sql_instances: united-triode-233023:us-east1:database
+  cloud_sql_instances: united-triode-233023:us-east1:database=tcp:5234

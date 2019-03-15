@@ -53,4 +53,10 @@ Set Credentials in .env
 
 * You can then run the server locally by issuing the command
 
-  `flask run` or `python main.py`
+  ```
+  flask run 
+  ```
+  or 
+  ```
+  python main.py
+  ```

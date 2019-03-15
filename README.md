@@ -1,9 +1,11 @@
 # Setup
 
 After cloning the repo, in the folder execute these commands:
+
+- Be sure to have `virtualenv` installed for python
    
 ```
-virtualvenv venv
+virtualenv venv
 
 source venv/bin/activate
 
@@ -12,11 +14,11 @@ pip install -r requirements.txt
 
 ## Setting Environment Variables
 
-Set Flask Enviroment Variables in .flaskenv
+Set Flask Enviroment Variables in `.flaskenv`
 
 - Example: FLASK_ENV=development
 
-Set Credentials in .env
+Set Credentials in `.env`
 
 - Example: DB_USER=user
 
@@ -24,9 +26,9 @@ Set Credentials in .env
 
 - Download and install [Google Cloud SDK](https://cloud.google.com/sdk/docs/downloads-interactive)
 
-  - Once install is completed you must run `gcloud init` in your terminal and login with the google account associated with the Google Cloud Platform
+  - Once installation is completed you must run `gcloud init` in your terminal and login with the google account associated with the Google Cloud Platform. Allows for easy authentication when running the cloud_sql_proxy
 
-  - For the cloud project select **united-triode-233023**
+  - For the Cloud Project select **united-triode-233023**
 
   - For the Google Compute Engine zone select **us-east1-d**
 
@@ -34,9 +36,15 @@ Set Credentials in .env
 
 ## Running Server
 
-- Run the cloud_sql_proxy executable by:
-
-  `[LINUX/MAC]./cloud_sql_proxy | [WINDOWS] cloud_sql_proxy.exe -instances=united-triode-233023:us-east1:database=tcp:5234`
+- Run the cloud_sql_proxy executable
+  - Linux/Mac
+    ```
+    ./cloud_sql_proxy -instances=united-triode-233023:us-east1:database=tcp:5234
+    ```
+  - Windows
+    ```
+    cloud_sql_proxy.exe -instances=united-triode-233023:us-east1:database=tcp:5234
+    ```
 
 - If the port is in use change the port in the above command to anything else and in the `__init__.py` of the **server** folder change the port value in this snippet:
 

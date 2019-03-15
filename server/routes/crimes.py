@@ -1,4 +1,5 @@
-from flask import Flask, request, Blueprint
+from flask import Blueprint, request
+from server import db
 
 CrimeRouter = Blueprint('crimes', __name__, url_prefix='/crimes')
 
@@ -28,7 +29,8 @@ def nearby_crimes():
     crime_filter = request.args.get('filter')
     time_range = request.args.get('timeSpan')
 
-    crimes = []
+    with db.connect() as conn:
+            crimes = conn.execute('select * from crime_info limit 1').fetchall()
 
     return '''
         <h1>TESTING nearby_crimes</h1>

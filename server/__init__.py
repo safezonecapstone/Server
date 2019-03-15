@@ -1,15 +1,11 @@
-from server.routes.stations import StationRouter
-from server.routes.crimes import CrimeRouter
 from dotenv import load_dotenv
 from os import getenv
 import sqlalchemy
 from flask import Flask
-from flask_restful import Api, Resource, reqparse, abort
 import logging
 
 # Create App Instance and associate with API
 app = Flask(__name__)
-api = Api(app)
 
 logger = logging.getLogger()
 
@@ -52,12 +48,17 @@ db = sqlalchemy.create_engine(
 # 'MONT' - Last 28 Days
 # 'WEEK' - Week To Date
 
-# Main API Interface
-class ServerApi(Resource):
-    def get(self):
-        with db.connect() as conn:
-            conn.execute('select * from crime_info limit 1')
-        return 1
 
-# Append routes to the API
-api.add_resource(ServerApi, '/')
+@app.route('/')
+def index():
+    with db.connect() as conn:
+        conn.execute('select * from crime_info limit 1')
+    return '''
+        <h1>Hi</h1>
+        '''
+
+from server.routes.stations import StationRouter
+from server.routes.crimes import CrimeRouter
+
+app.register_blueprint(StationRouter)
+app.register_blueprint(CrimeRouter)

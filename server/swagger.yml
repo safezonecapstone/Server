@@ -1,0 +1,34 @@
+swagger: "2.0"
+info:
+  description: SafeZone API
+  version: "1.0.0"
+  title: SafeZone API
+
+basePath: "/api"
+
+paths:
+  /crimes/nearby:
+    get:
+      operationId: "server.routes.crimes.nearby_crimes"
+      tags:
+        - "Crimes"
+      summary: "Crime occurrences within 500ft of the location"
+      description: "Provide list of Crime Occurrences"
+      responses: 
+        200:
+          description: "crimes"
+          schema:
+            type: "array"
+            items: 
+              properties:
+                category:
+                  type: "string"
+                date:
+                  type: "string"
+                latitude:
+                  type: "number"
+                longitude:
+                  type: "number"
+                pd_desc:
+                  type: "string"
+            

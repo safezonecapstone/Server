@@ -1,13 +1,9 @@
 from dotenv import load_dotenv
 from os import getenv
 import sqlalchemy
-from flask import Flask
+from flask import Flask, redirect
 import logging
-
-# Create App Instance and associate with API
-app = Flask(__name__)
-
-logger = logging.getLogger()
+from connexion import App
 
 # Load Environment Variables
 load_dotenv('.flaskenv')
@@ -33,32 +29,11 @@ db = sqlalchemy.create_engine(
     pool_recycle=1800
 )
 
+app = App(__name__, specification_dir='./')
+app.add_api('swagger.yml')
 
-# TRAIN_LINE
-# Possible values:
-# ----
-
-# CRIME_NAME
-# Possible values:
-# ----
-
-# timeSpan
-# Possible Values:
-# 'YEAR' - Year To Date
-# 'MONT' - Last 28 Days
-# 'WEEK' - Week To Date
-
+logger = logging.getLogger()
 
 @app.route('/')
 def index():
-    with db.connect() as conn:
-        conn.execute('select * from crime_info limit 1')
-    return '''
-        <h1>Hi</h1>
-        '''
-
-from server.routes.stations import StationRouter
-from server.routes.crimes import CrimeRouter
-
-app.register_blueprint(StationRouter)
-app.register_blueprint(CrimeRouter)
+    return redirect('/api/ui')

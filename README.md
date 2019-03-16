@@ -62,9 +62,8 @@ Set Credentials in `.env`
 * You can then run the server locally by issuing the command
 
   ```
-  flask run 
-  ```
-  or 
-  ```
   python main.py
   ```
+## Documentation
+
+  - Description of all routes and the way they are used can be found at __127.0.0.1:5000/api/ui__

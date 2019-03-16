@@ -1,7 +1,6 @@
-from flask import Blueprint, request
+from flask import request, abort, jsonify
+from flask import jsonify
 from server import db
-
-CrimeRouter = Blueprint('crimes', __name__, url_prefix='/crimes')
 
 # CRIME_NAME
 # Possible values:
@@ -22,18 +21,29 @@ CrimeRouter = Blueprint('crimes', __name__, url_prefix='/crimes')
 # }
 
 
-@CrimeRouter.route('/nearby', methods=['GET'])
 def nearby_crimes():
-    lat = request.args.get('latitude')
-    lon = request.args.get('longitude')
-    crime_filter = request.args.get('filter')
-    time_range = request.args.get('timeSpan')
+        lat = request.args.get('latitude')
+        lon = request.args.get('longitude')
+        crime_filter = request.args.get('filter')
+        time_range = request.args.get('timeSpan')
 
-    with db.connect() as conn:
-            crimes = conn.execute('select * from crime_info limit 1').fetchall()
+        # if lat == None or lon == None:
+        #         abort(500)
 
-    return '''
-        <h1>TESTING nearby_crimes</h1>
-        <p>{}</p>
-        <p>Received Latitude: {}, Longitude: {}, Filter: {}, Range: {}</p>
-        '''.format(crimes, lat, lon, crime_filter, time_range)
+        with db.connect() as conn:
+                crimes = conn.execute(
+                        '''select crime_info.crime_date, crime_info.pd_desc, crime_info.latitude, crime_info.longitude, crime_categories.category from crime_info
+                        join crime_categories on crime_info.category_id=crime_categories.id 
+                        limit 1'''
+                        ).fetchall()
+
+        return jsonify([
+                {
+                        "date": crime[0],
+                        "pd_desc": crime[1],
+                        "latitude": crime[2],
+                        "longitude": crime[3],
+                        "category": crime[4]
+                }
+                for crime in crimes
+        ])

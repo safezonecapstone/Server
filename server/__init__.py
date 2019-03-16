@@ -35,5 +35,6 @@ app.add_api('swagger.yml')
 logger = logging.getLogger()
 
 @app.route('/')
+@app.route('/api')
 def index():
     return redirect('/api/ui')

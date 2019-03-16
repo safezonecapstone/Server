@@ -66,4 +66,4 @@ Set Credentials in `.env`
   ```
 ## Documentation
 
-  - Description of all routes and the way they are used can be found at __127.0.0.1:5000/api/ui__
+  - Description of all routes and the way they are used can be found at the endpoint __/api/ui__

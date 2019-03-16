@@ -5,7 +5,7 @@ info:
   title: SafeZone API
 
 servers:
-  - url: 'http://127.0.0.1/api'
+  - url: '/api'
 
 paths:
   /crimes/nearby:

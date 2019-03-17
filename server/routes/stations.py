@@ -1,30 +1,28 @@
-from flask import Flask, request, Blueprint
+from flask import request, abort, jsonify
+from server.models import db
+from sqlalchemy.sql import text
 
-StationRouter = Blueprint('stations', __name__, url_prefix='/stations')
-
-# TRAIN_LINE
-# Possible values:
-# ----
-
-# timeSpan
-# Possible Values:
-# 'YEAR' - Year To Date
-# 'MONT' - Last 28 Days
-# 'WEEK' - Week To Date
-
-
-@StationRouter.route('/nearby', methods=['GET'])
 def nearby_stations():
-    lat = request.args.get('latitude')
-    lon = request.args.get('longitude')
-    station_filter = request.args.get('filter')
-    # Expects
-    # {
-    #   latitude:   FLOAT
-    #   longitude:  FLOAT
-    #   filter:     ARRAY [TRAIN LINE]  Possible Values Listed Above
-    # }
-    return '''
-        <h1>TESTING nearby_stations</h1>
-        <p>Received Latitude: {}, Longitude: {}, Filter: {}</p>
-        '''.format(lat, lon, station_filter)
+        lat = request.args.get('latitude')
+        lon = request.args.get('longitude')
+        limit = request.args.get('limit', 5)
+
+        with db.connect() as conn:
+                query = text(
+                        '''
+                        select * from (select name, line, latitude, longitude, acos( sin( radians(:lat) ) * sin( radians(latitude) ) + cos( radians(:lat) ) * cos( radians(latitude) ) * cos( radians(:lon - longitude) ) ) * 6371 as distance from stations) as t1
+                        where distance < 0.402336 limit :limit
+                        '''
+                        )
+                stations = conn.execute(query, lat=lat, lon=lon, limit=limit)
+
+        return [
+                {
+                        "name": station[0],
+                        "lines": station[1],
+                        "latitude": station[2],
+                        "longitude": station[3]
+
+                }
+                for station in stations
+        ]

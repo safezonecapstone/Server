@@ -36,29 +36,17 @@ Set Credentials in `.env`
 
 ## Running Server
 
+- Create a folder in the root directory named `cloudsql`
+
 - Run the cloud_sql_proxy executable
   - Linux/Mac
     ```
-    ./cloud_sql_proxy -instances=united-triode-233023:us-east1:database=tcp:5234
+    ./cloud_sql_proxy -dir=/cloudsql &
     ```
   - Windows
     ```
-    cloud_sql_proxy.exe -instances=united-triode-233023:us-east1:database=tcp:5234
+    cloud_sql_proxy.exe -dir=\cloudsql &
     ```
-
-- If the port is in use change the port in the above command to anything else and in the `__init__.py` of the **server** folder change the port value in this snippet:
-
-  ```
-    sqlalchemy.engine.url.URL(
-        drivername='postgres',
-        username = db_user,
-        password = db_pass,
-        database = db_name,
-        host='127.0.0.1',
-        port='5234'
-    ),
-  ```
-
 * You can then run the server locally by issuing the command
 
   ```

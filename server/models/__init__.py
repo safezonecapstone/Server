@@ -5,6 +5,7 @@ from os import getenv
 db_user = getenv('DB_USER')
 db_pass = getenv('DB_PASS')
 db_name = getenv('DB_NAME')
+cloud_sql_instance = getenv('DB_CONNECTION_NAME')
 
 db = create_engine(
     engine.url.URL(
@@ -12,14 +13,17 @@ db = create_engine(
         username=db_user,
         password=db_pass,
         database=db_name,
-        host='127.0.0.1',
-        port='5234'
+        query={
+          'unix_sock': '/cloudsql/{}/.s.PGSQL.5432'.format(cloud_sql_instance)
+        }
     ),
     pool_size=5,
     max_overflow=10,
     pool_timeout=30,
     pool_recycle=1800
 )
+
+print(db_user)
 
 metadata = MetaData(bind=db)
 crimes = Table('crime_info', metadata, autoload=True)

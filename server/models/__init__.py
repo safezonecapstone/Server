@@ -23,8 +23,6 @@ db = create_engine(
     pool_recycle=1800
 )
 
-print(db_user)
-
 metadata = MetaData(bind=db)
 crimes = Table('crime_info', metadata, autoload=True)
 categories = Table('crime_categories', metadata, autoload=True)

@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from flask import Flask, redirect
+from flask import redirect
 import logging
 from connexion import App
 

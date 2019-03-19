@@ -22,7 +22,6 @@ from datetime import datetime, timedelta
 #   timeSpan:  STRING              Possible Values Listed Above
 # }
 
-
 def nearby_crimes():
     lat = request.args.get('latitude')
     lon = request.args.get('longitude')

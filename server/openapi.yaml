@@ -61,6 +61,8 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/Crime'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
             
   /stations/nearby:
     get:
@@ -97,9 +99,23 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/Station'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
 
+security:
+  - API_KEY_AUTH: []
 
 components:
+  securitySchemes:
+    API_KEY_AUTH:
+      type: apiKey
+      description: API KEY in order to access endpoints
+      in: query
+      name: API_KEY
+      x-apikeyInfoFunc: 'server.auth.authenticated'
+  responses:
+    UnauthorizedError:
+      description: API key is missing or invalid
   schemas:
     Crime:
       type: object

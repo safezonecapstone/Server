@@ -4,3 +4,4 @@ __pycache__
 .vscode
 .env
 cloud_sql_proxy
+*.pyc

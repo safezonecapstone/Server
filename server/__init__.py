@@ -1,14 +1,17 @@
 from dotenv import load_dotenv
 from flask import redirect
 import logging
-from connexion import App
+from connexion import FlaskApp
+from flask_cors import CORS
 
 # Load Environment Variables
 load_dotenv('.flaskenv')
 load_dotenv('.env')
 
-app = App(__name__, specification_dir='./')
+app = FlaskApp(__name__, specification_dir='./')
 app.add_api('openapi.yaml')
+
+CORS(app.app)
 
 logger = logging.getLogger()
 

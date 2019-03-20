@@ -5,7 +5,7 @@ from os import getenv
 db_user = getenv('DB_USER')
 db_pass = getenv('DB_PASS')
 db_name = getenv('DB_NAME')
-cloud_sql_instance = getenv('DB_CONNECTION_NAME')
+sql_socket_url = getenv('DB_SOCKET_URL')
 
 db = create_engine(
     engine.url.URL(
@@ -14,7 +14,7 @@ db = create_engine(
         password=db_pass,
         database=db_name,
         query={
-          'unix_sock': '/cloudsql/{}/.s.PGSQL.5432'.format(cloud_sql_instance)
+          'unix_sock': sql_socket_url
         }
     ),
     pool_size=5,

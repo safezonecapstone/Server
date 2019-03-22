@@ -46,12 +46,25 @@ def nearby_crimes():
     with db.connect() as conn:
         query = text(
             '''
-            select t1.crime_date, t1.pd_desc, t1.latitude, t1.longitude, t2.category from crime_info as t1
+            select t1.crime_date, t1.ofns_desc, t1.latitude, t1.longitude, t2.category from crime_info as t1
             join crime_categories as t2 on t1.category_id = t2.id 
             where acos( sin( radians(:lat) ) * sin( radians(latitude) ) + cos( radians(:lat) ) * cos( radians(latitude) ) * cos( radians( :lon - longitude) ) ) * 6371 < 0.1524 and t1.category_id = ANY(:cat) and t1.crime_date > (:time)
             '''
         )
         results = conn.execute(query, lat=lat, lon=lon, cat=crime_filter, time=time_range).fetchall()
+
+    crimes = []
+    category_counts = {}
+
+    for r in results:
+        crimes.append({
+            "date": r[0],
+            "offense_desc": r[1],
+            "latitude": r[2],
+            "longitude": r[3],
+            "category": r[4],
+        })
+
 
     return jsonify([
         {

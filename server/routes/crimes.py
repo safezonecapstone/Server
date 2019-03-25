@@ -1,78 +1,60 @@
 from flask import request, abort, jsonify
 from flask import jsonify
 from server.models import db
+from server.utils import crimes_near_point
 from sqlalchemy.sql import text, select, join
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 
-# CRIME_NAME
-# Possible values:
-# ----
-
-# timeSpan
-# Possible Values:
-# 'YEAR' - Year To Date
-# 'MONT' - Last 28 Days
-# 'WEEK' - Week To Date
-
-# Expects
-# {
-#   latitude:  FLOAT
-#   longitude: FLOAT
-#   filter:    ARRAY [CRIME_NAME]  Possible Values Listed Above
-#   timeSpan:  STRING              Possible Values Listed Above
-# }
-
-def nearby_crimes():
-    today = datetime.today()
+def nearby_crimes_by_point():
 
     lat = request.args.get('latitude')
     lon = request.args.get('longitude')
 
     crime_filter = tuple([ int(a) for a in request.args.getlist('filter') ])
-    crime_filter = tuple(range(1,13)) if len(crime_filter) == 0 else crime_filter
+    crime_filter = crime_filter if len(crime_filter) > 0 else tuple(range(1,13))
 
-    time_range = request.args.get('timeSpan')
-    
-    if time_range == None:
-        time_range = date.min
-    else:
-        if time_range == 'week':
-            time_range = today - timedelta(days=7)
-        elif time_range == 'month':
-            time_range = today - timedelta(days=30)
-        elif time_range == 'year':
-            time_range = today - timedelta(days=365)
+    time_range = request.args.get('timeSpan', 'year')
 
-    with db.connect() as conn:
-        query = text(
-            '''
-            select t1.crime_date, t1.ofns_desc, t1.latitude, t1.longitude, t2.category from crime_info as t1
-            join crime_categories as t2 on t1.category_id = t2.id 
-            where acos( sin( radians(:lat) ) * sin( radians(latitude) ) + cos( radians(:lat) ) * cos( radians(latitude) ) * cos( radians( :lon - longitude) ) ) * 6371 < 0.1524 and t1.category_id = ANY(:cat) and t1.crime_date > (:time)
-            '''
-        )
-        results = conn.execute(query, lat=lat, lon=lon, cat=crime_filter, time=time_range).fetchall()
+    if time_range == 'week':
+        time_range = datetime.today() - timedelta(days=7)
+    elif time_range == 'month':
+        time_range = datetime.today() - timedelta(days=30)
+    elif time_range == 'year':
+        time_range = datetime.today() - timedelta(days=365)
+
+    results = crimes_near_point(lat, lon, crime_filter, time_range)
+
+    category_counts = {
+        'Murder': 0,
+        'Rape': 0,
+        'Robbery': 0,
+        'Felony Assault': 0,
+        'Burglary': 0,
+        'Grand Larceny': 0,
+        'Petit Larceny': 0,
+        'Misdemeanor Assault': 0,
+        'Misdemeanor Sex Crimes': 0,
+        'Kidnapping': 0,
+        'Offenses against Public Order': 0,
+        'Shootings': 0
+    }
 
     crimes = []
-    category_counts = {}
 
     for r in results:
         crimes.append({
             "date": r[0],
-            "offense_desc": r[1],
-            "latitude": r[2],
-            "longitude": r[3],
-            "category": r[4],
+            "category": r[1],
+            "ofns_desc": r[2],
+            "pd_desc": r[3],
+            "latitude": r[4],
+            "longitude": r[5],
         })
+        category_counts[r[1]] += 1
 
-
-    return jsonify([
+    return jsonify(
         {
-            "date": r[0],
-            "crime_desc": r[1],
-            "latitude": r[2],
-            "longitude": r[3],
-            "category": r[4],
+            'results': crimes,
+            'frequencies': category_counts
         }
-        for r in results
-    ])
+    )

@@ -28,7 +28,31 @@ paths:
         - name: filter
           in: query
           required: false
-          description: Crime Categories to filter Crime Occurrences by
+          description: |
+            ## Crime Categories to filter by:
+            1 -> Murder
+            
+            2 -> Rape
+            
+            3 -> Robbery
+            
+            4 -> Felony Assault
+            
+            5 -> Burglary
+            
+            6 -> Grand Larceny
+            
+            7 -> Petit Larceny
+            
+            8 -> Misdemeanor Assault
+            
+            9 -> Misdemeanor Sex Crimes
+            
+            10 -> Kidnapping
+            
+            11 -> Offenses against Public Order
+            
+            12 -> Shootings
           schema:
             type: array
             items:
@@ -41,7 +65,8 @@ paths:
         - name: timeSpan
           in: query
           required: false
-          description: Time Span to filter Crime Occurences by
+          description: |
+            ## Time Span to filter Crime Occurences by
           schema:
             type: string
             enum:
@@ -49,18 +74,27 @@ paths:
               - month
               - year
 
-      operationId: server.routes.crimes.nearby_crimes
+      operationId: server.routes.crimes.nearby_crimes_by_point
       tags:
         - Crimes
       summary: List crime occurrences within 500ft of a coordinate
-      description: Provide list of Crime Occurrences
+      description: | 
+        # Provide list of Crime Occurrences
       responses: 
         200:
-          description: A JSON array of crime occurrences
+          description: A JSON consisting of an array of crime occurrences and the frequencies of each category
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/Crime'
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/Crime'
+                  frequencies: 
+                    $ref: '#/components/schemas/Frequencies'
+
         401:
           $ref: '#/components/responses/UnauthorizedError'
             
@@ -81,17 +115,12 @@ paths:
           schema:
             type: number
             format: float
-        - name: limit
-          in: query
-          required: false
-          description: Number of Stations to return
-          schema:
-            type: number
       operationId: server.routes.stations.nearby_stations
       tags: 
         - Stations
       summary: List Subway Stations that are within 1/4 mile of a coordinate
-      description: Provide list of station occurrences
+      description: | 
+        ## Provide list of station occurrences
       responses:
         200:
           description: A JSON array of Subway Stations
@@ -130,18 +159,53 @@ components:
         longitude:
           type: number
           format: float
-        crime_desc:
+        ofns_desc:
+          type: string
+        pd_desc:
           type: string
     Station:
       type: object
       properties:
+        id:
+          type: number
+          format: integer
         name:
           type: string
-        line:
-          type: string
+        lines:
+          type: array
+          items:
+            type: string
         latitude:
           type: number
           format: float
         longitude:
           type: number
           format: float
+    Frequencies:
+      type: object
+      properties:
+        Murder:
+          type: number
+        Rape:
+          type: number
+        Robbery:
+          type: number
+        Felony Assault:
+          type: number
+        Burglary:
+          type: number
+        Grand Larceny:
+          type: number
+        Petit Larceny:
+          type: number
+        Misdemeanor Assault:
+          type: number
+        Misdemeanor Sex Crimes:
+          type: number
+        Kidnapping:
+          type: number
+        Offenses against Public Order:
+          type: number
+        Shootings:
+          type: number
+

@@ -4,23 +4,24 @@ from server.models import db
 from server.utils import crimes_near_point
 from sqlalchemy.sql import text, select, join
 from datetime import datetime, timedelta
+from typing import List
 
 def nearby_crimes_by_point():
 
-    lat = request.args.get('latitude')
-    lon = request.args.get('longitude')
+    lat: float = request.args.get('latitude')
+    lon: float  = request.args.get('longitude')
 
-    crime_filter = tuple([ int(a) for a in request.args.getlist('filter') ])
+    crime_filter: tuple = tuple([ int(a) for a in request.args.getlist('filter') ])
     crime_filter = crime_filter if len(crime_filter) > 0 else tuple(range(1,13))
 
-    time_range = request.args.get('timeSpan', 365)
+    time_range: int = request.args.get('timeSpan', 365)
 
     if time_range == 'week':
         time_range = 7
     elif time_range == 'month':
         time_range = 30
 
-    results = crimes_near_point(lat, lon, crime_filter, time_range)
+    results: List[tuple] = crimes_near_point(lat, lon, crime_filter, time_range)
 
     category_counts = {
         'Murder': 0,

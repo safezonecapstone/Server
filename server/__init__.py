@@ -15,7 +15,6 @@ app.add_api('openapi.yaml')
 # Add CORS to Flask App
 CORS(app.app)
 
-
 logger = logging.getLogger()
 
 # Default Route

@@ -13,14 +13,12 @@ def nearby_crimes_by_point():
     crime_filter = tuple([ int(a) for a in request.args.getlist('filter') ])
     crime_filter = crime_filter if len(crime_filter) > 0 else tuple(range(1,13))
 
-    time_range = request.args.get('timeSpan', 'year')
+    time_range = request.args.get('timeSpan', 365)
 
     if time_range == 'week':
-        time_range = datetime.today() - timedelta(days=7)
+        time_range = 7
     elif time_range == 'month':
-        time_range = datetime.today() - timedelta(days=30)
-    elif time_range == 'year':
-        time_range = datetime.today() - timedelta(days=365)
+        time_range = 30
 
     results = crimes_near_point(lat, lon, crime_filter, time_range)
 

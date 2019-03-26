@@ -14,14 +14,16 @@ paths:
         - name: latitude
           in: query
           required: true
-          description: Latitude of a Coordinate
+          description: | 
+            ## Latitude of a Coordinate
           schema:
             type: number
             format: float
         - name: longitude
           in: query
           required: true
-          description: Longitude of a Coordinate
+          description: |
+            ## Longitude of a Coordinate
           schema:
             type: number
             format: float
@@ -29,50 +31,16 @@ paths:
           in: query
           required: false
           description: |
-            ## Crime Categories to filter by:
-            1 -> Murder
-            
-            2 -> Rape
-            
-            3 -> Robbery
-            
-            4 -> Felony Assault
-            
-            5 -> Burglary
-            
-            6 -> Grand Larceny
-            
-            7 -> Petit Larceny
-            
-            8 -> Misdemeanor Assault
-            
-            9 -> Misdemeanor Sex Crimes
-            
-            10 -> Kidnapping
-            
-            11 -> Offenses against Public Order
-            
-            12 -> Shootings
+            ## Crime Categories to filter by
           schema:
-            type: array
-            items:
-              type: number
-              minimum: 1
-              maximum: 12
-            uniqueItems: true
-            minItems: 1
-            maxItems: 12
+            $ref: '#/components/schemas/Filter'
         - name: timeSpan
           in: query
           required: false
           description: |
             ## Time Span to filter Crime Occurences by
           schema:
-            type: string
-            enum:
-              - week
-              - month
-              - year
+            $ref: '#/components/schemas/Time Range'
 
       operationId: server.routes.crimes.nearby_crimes_by_point
       tags:
@@ -104,21 +72,23 @@ paths:
         - name: latitude
           in: query
           required: true
-          description: Latitude of a Coordinate
+          description: | 
+            ## Latitude of a Coordinate
           schema:
             type: number
             format: float
         - name: longitude
           in: query
           required: true
-          description: Longitude of a Coordinate
+          description: |
+            ## Longitude of a Coordinate
           schema:
             type: number
             format: float
       operationId: server.routes.stations.nearby_stations
       tags: 
         - Stations
-      summary: List Subway Stations that are within 1/4 mile of a coordinate
+      summary: List Subway Stations that are within 1/2 mile of a coordinate or the five nearest stations
       description: | 
         ## Provide list of station occurrences
       responses:
@@ -127,8 +97,86 @@ paths:
           content: 
             application/json:
               schema: 
-                $ref: '#/components/schemas/Station'
+                type: object
+                properties:
+                  id:
+                    type: number
+                    format: integer
+                  name:
+                    type: string
+                  lines:
+                    type: array
+                    items:
+                      type: string
+                  latitude:
+                    type: number
+                    format: float
+                  longitude:
+                    type: number
+                    format: float
+                  frequencies:
+                    $ref: '#/components/schemas/Frequencies'
         401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /station/rank:
+    get:
+      parameters:
+        - name: station_ids
+          in: query
+          required: false
+          description: |
+            ## Station IDs
+          schema:
+            type: array
+            items:
+              type: number
+              minimum: 1
+              maximum: 473
+            uniqueItems: true
+            minItems: 1
+            maxItems: 473
+        - name: filter
+          in: query
+          required: false
+          description: |
+            ## Crime Categories to filter by
+          schema:
+            $ref: '#/components/schemas/Filter'
+        - name: timeSpan
+          in: query
+          required: false
+          description: |
+            ## Time Span to filter Crime Occurences by
+          schema:
+            $ref: '#/components/schemas/Time Range'
+      operationId: server.routes.stations.station_risk_percent
+      tags:
+        - Stations
+      summary: Gives percentile ranking for subway stations based on given station ids or all stations if no ids are given
+      description: |
+        ## List of stations
+      responses:
+        200:
+          description: A JSON consisting of an subway stations with their percentile rank
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    format: integer
+                  name:
+                    type: string
+                  lines:
+                    type: array
+                    items:
+                      type: string
+                  percentile:
+                    type: number
+                    format: float
+        401: 
           $ref: '#/components/responses/UnauthorizedError'
 
 security:
@@ -146,6 +194,23 @@ components:
     UnauthorizedError:
       description: API key is missing or invalid
   schemas:
+    Filter:
+      type: array
+      items:
+        type: number
+        minimum: 1
+        maximum: 12
+      uniqueItems: true
+      minItems: 1
+      maxItems: 12
+    Time Range:
+      enum:
+        - "week"
+        - "month"
+        - "3 month"
+        - "6 month"
+        - "9 month"
+        - "year"
     Crime:
       type: object
       properties:
@@ -163,24 +228,6 @@ components:
           type: string
         pd_desc:
           type: string
-    Station:
-      type: object
-      properties:
-        id:
-          type: number
-          format: integer
-        name:
-          type: string
-        lines:
-          type: array
-          items:
-            type: string
-        latitude:
-          type: number
-          format: float
-        longitude:
-          type: number
-          format: float
     Frequencies:
       type: object
       properties:

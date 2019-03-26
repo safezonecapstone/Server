@@ -1,10 +1,10 @@
 from flask import request, abort, jsonify
 from server.models import db
-from server.utils import five_closest_stations, stations_within_half_mile, station_percentile_rank, crime_categories_occurrences_per_station, Dates
+from server.utils import five_closest_stations, stations_within_half_mile, station_percentile_rank, crime_categories_occurrences_per_station, crimes_near_station, Dates
 from sqlalchemy.sql import text
 from typing import List
 
-def nearby_stations():
+def nearby_stations_all():
     lat: float = request.args.get('latitude')
     lon: float = request.args.get('longitude')
     
@@ -20,7 +20,9 @@ def nearby_stations():
             "lines": station[2].split('-'),
             "latitude": station[3],
             "longitude": station[4],
-            "frequencies": dict(crime_categories_occurrences_per_station(station[0], 365))
+            "frequencies": dict(crime_categories_occurrences_per_station(station[0], 365)),
+            "percentile": round(station_percentile_rank((station[0]), (), 365), 2),
+            "crimes": crimes_near_station(station[0], 365)
         }
         for station in stations
     ])

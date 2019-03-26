@@ -84,39 +84,41 @@ paths:
         - Stations
       summary: List Subway Stations that are within 1/2 mile of a coordinate or the five nearest stations
       description: | 
-        ## Provide list of station occurrences
+        ## Provide list of nearby subway stations, its percentile, frequencies of crimes, and list of crime occurrences for each
       responses:
         200:
           description: A JSON array of Subway Stations
           content: 
             application/json:
               schema: 
-                type: object
-                properties:
-                  id:
-                    type: number
-                    format: integer
-                  name:
-                    type: string
-                  lines:
-                    type: array
-                    items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      format: integer
+                    name:
                       type: string
-                  latitude:
-                    type: number
-                    format: float
-                  longitude:
-                    type: number
-                    format: float
-                  frequencies:
-                    $ref: '#/components/schemas/Frequencies'
-                  percentile:
-                    type: number
-                    format: float
-                  crimes:
-                    type: array
-                    items: 
-                      $ref: '#/components/schemas/Crime'
+                    lines:
+                      type: array
+                      items:
+                        type: string
+                    latitude:
+                      type: number
+                      format: float
+                    longitude:
+                      type: number
+                      format: float
+                    frequencies:
+                      $ref: '#/components/schemas/Frequencies'
+                    percentile:
+                      type: number
+                      format: float
+                    crimes:
+                      type: array
+                      items: 
+                        $ref: '#/components/schemas/Crime'
         401:
           $ref: '#/components/responses/UnauthorizedError'
 

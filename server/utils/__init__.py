@@ -6,9 +6,9 @@ from typing import Dict
 Dates: dict = {
     "week": 7,
     "month": 30,
-    "3 months": 90,
-    "6 months": 180,
-    "9 months": 270,
+    "3 month": 90,
+    "6 month": 180,
+    "9 month": 270,
     "year": 365
 }
 

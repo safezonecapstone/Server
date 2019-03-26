@@ -204,6 +204,7 @@ components:
       minItems: 1
       maxItems: 12
     Time Range:
+      type: string
       enum:
         - "week"
         - "month"

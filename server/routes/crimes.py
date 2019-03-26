@@ -16,7 +16,7 @@ def nearby_crimes_by_point():
 
     time_range: int = Dates[request.args.get('timeSpan', 'year')]
 
-    results: List[tuple] = crimes_near_point(lat, lon, crime_filter, time_range)
+    results = crimes_near_point(lat, lon, crime_filter, time_range)
 
     category_counts = {
         'Murder': 0,
@@ -37,12 +37,12 @@ def nearby_crimes_by_point():
 
     for r in results:
         crimes.append({
-            "date": r[0],
-            "category": r[1],
-            "ofns_desc": r[2],
-            "pd_desc": r[3],
-            "latitude": r[4],
-            "longitude": r[5],
+            "date": r['crime_date'],
+            "category": r['category'],
+            "ofns_desc": r['ofns_desc'],
+            "pd_desc": r['pd_desc'],
+            "latitude": r['latitude'],
+            "longitude": r['longitude'],
         })
         category_counts[r[1]] += 1
 

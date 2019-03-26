@@ -62,7 +62,7 @@ paths:
         401:
           $ref: '#/components/responses/UnauthorizedError'
             
-  /stations/nearby/all:
+  /stations/nearby:
     get:
       parameters:
         - name: latitude

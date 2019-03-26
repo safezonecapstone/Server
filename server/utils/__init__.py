@@ -43,7 +43,9 @@ def stations_within_half_mile(latitude: float, longitude: float) -> list:
 def crimes_near_station(station_id: int, range: int) -> list:
     query = text(
         '''
-        select t2.* from crimes_by_station as t1 join crime_info as t2 on t1.crime_id = t2.id where t1.station_id = :id and t2.crime_date > current_date - :range;
+        select t3.crime_date, t3.pd_desc, t3.ofns_desc, t3.latitude, t3.longitude, t4.category from (
+           select t2.* from crimes_by_station as t1 join crime_info as t2 on t1.crime_id = t2.id where t1.station_id = 1 and t2.crime_date > current_date - 365
+        ) as t3 join crime_categories as t4 on t3.category_id = t4.id
         '''
     )
 

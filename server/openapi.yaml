@@ -128,8 +128,7 @@ paths:
         - name: station_ids
           in: query
           required: false
-          description: |
-            ## Station IDs
+          description: Station IDs
           schema:
             type: array
             items:
@@ -142,15 +141,13 @@ paths:
         - name: filter
           in: query
           required: false
-          description: |
-            ## Crime Categories to filter by
+          description: Crime Categories to filter by
           schema:
             $ref: '#/components/schemas/Filter'
         - name: timeSpan
           in: query
           required: false
-          description: |
-            ## Time Span to filter Crime Occurences by
+          description: Time Span to filter Crime Occurences by
           schema:
             $ref: '#/components/schemas/Time Range'
       operationId: server.routes.stations.station_risk_percent

@@ -8,21 +8,31 @@ def nearby_stations_all():
     lat: float = request.args.get('latitude')
     lon: float = request.args.get('longitude')
     
-    five_closest: List[tuple] = five_closest_stations(lat, lon)
-    half_mile: List[tuple] = stations_within_half_mile(lat, lon)
+    five_closest = list(five_closest_stations(lat, lon))
+    half_mile = list(stations_within_half_mile(lat, lon))
 
-    stations: List[tuple] = half_mile if len(half_mile) > len(five_closest) else five_closest 
+    stations = half_mile if len(half_mile) > len(five_closest) else five_closest 
 
     return jsonify([
         {
-            "id": station[0],
-            "name": station[1],
-            "lines": station[2].split('-'),
-            "latitude": station[3],
-            "longitude": station[4],
-            "frequencies": dict(crime_categories_occurrences_per_station(station[0], 365)),
-            "percentile": round(station_percentile_rank((station[0]), (), 365), 2),
-            "crimes": crimes_near_station(station[0], 365)
+            "id": station['id'],
+            "name": station['name'],
+            "lines": station['line'].split('-'),
+            "latitude": station['latitude'],
+            "longitude": station['longitude'],
+            "frequencies": dict(list(crime_categories_occurrences_per_station(station[0], 365))),
+            # "percentile": station_percentile_rank((station['id'],), tuple(), 365),
+            "crimes": [
+                {
+                    "date": i["crime_date"],
+                    "category": i["category"],
+                    "ofns_desc": i["ofns_desc"],
+                    "pd_desc": i["pd_desc"],
+                    "latitude": i["latitude"],
+                    "longitude": i["longitude"]
+                } 
+                for i in list(crimes_near_station(station[0], 365))
+            ]
         }
         for station in stations
     ])

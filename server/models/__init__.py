@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, engine, Table, MetaData
+from sqlalchemy import create_engine, engine
 from os import getenv
 
 # Generate Google Cloud SQL connection pool
@@ -19,7 +19,3 @@ db = create_engine(
     pool_recycle=1800
 )
 
-metadata = MetaData(bind=db)
-crimes = Table('crime_info', metadata, autoload=True)
-categories = Table('crime_categories', metadata, autoload=True)
-stations = Table('stations', metadata, autoload=True)

@@ -24,7 +24,7 @@ def five_closest_stations(latitude: float, longitude: float) -> list:
     with db.connect() as conn:
         results = conn.execute(query, lat=latitude, lon=longitude).fetchall()
 
-    return results
+    return list(results)
 
 def stations_within_half_mile(latitude: float, longitude: float) -> list:
     query = text(
@@ -38,7 +38,7 @@ def stations_within_half_mile(latitude: float, longitude: float) -> list:
     with db.connect() as conn:
         results = conn.execute(query, lat=latitude, lon=longitude).fetchall()
 
-    return results
+    return list(results)
 
 def crimes_near_station(station_id: int, range: int) -> list:
     query = text(
@@ -52,7 +52,7 @@ def crimes_near_station(station_id: int, range: int) -> list:
     with db.connect() as conn:
         results = conn.execute(query, id=station_id, range=range)
 
-    return results
+    return list(results)
     
 
 def crimes_near_point(latitude: float, longitude: float, categories: tuple, range: int) -> list:
@@ -66,7 +66,7 @@ def crimes_near_point(latitude: float, longitude: float, categories: tuple, rang
     with db.connect() as conn:
         results = conn.execute(query, lat=latitude, lon=longitude, cat=categories, range=range).fetchall()
 
-    return results
+    return list(results)
 
 def station_percentile_rank(station_ids: tuple, categories: tuple, range: int) -> list:
     query = text(
@@ -80,7 +80,7 @@ def station_percentile_rank(station_ids: tuple, categories: tuple, range: int) -
                 ) as t6 on t5.id = t6.station_id group by t5.id
             ) as t7
         )
-        select t1.id, t1.name, t1.line, t1.sum / cast(t2.max as float) * 100 as percentile from subquery as t1 join (select max(coalesce(subquery.sum, 0)) from subquery) as t2 on true where t1.id = any(:cat) order by percentile
+        select t1.id, t1.name, t1.line, t1.sum / cast(t2.max as float) * 100 as percentile from subquery as t1 join (select max(coalesce(subquery.sum, 0)) from subquery) as t2 on true where t1.id = any(:s_id) order by percentile 
         '''
     ) if len(station_ids) > 0 else text(
         '''
@@ -100,7 +100,7 @@ def station_percentile_rank(station_ids: tuple, categories: tuple, range: int) -
     with db.connect() as conn:
         results = conn.execute(query, cat=categories, range=range, s_id=station_ids) if len(station_ids) > 0 else conn.execute(query, cat=categories, range=range).fetchall()
 
-    return results
+    return list(results)
 
 # Give Crime Category IDs
 # For each station display occurences for given ids
@@ -121,7 +121,7 @@ def crime_category_occurrence_all_stations(categories: tuple, range: int) -> lis
     with db.connect() as conn:
         results = conn.execute(query, cat=categories, range=range).fetchall()
 
-    return results
+    return list(results)
 
 # Give Station ID 
 # Gives occurrences for each crime category
@@ -143,4 +143,4 @@ def crime_categories_occurrences_per_station(station_id: int, range: int) -> lis
     with db.connect() as conn:
         results = conn.execute(query, s_id=station_id, range=range)
 
-    return results
+    return list(results)

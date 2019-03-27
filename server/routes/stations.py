@@ -8,8 +8,8 @@ def nearby_stations_all():
     lat: float = request.args.get('latitude')
     lon: float = request.args.get('longitude')
     
-    five_closest = five_closest_stations(lat, lon)
-    half_mile = stations_within_half_mile(lat, lon)
+    five_closest: list = five_closest_stations(lat, lon)
+    half_mile: list = stations_within_half_mile(lat, lon)
 
     stations = half_mile if len(half_mile) > len(five_closest) else five_closest
 
@@ -20,25 +20,13 @@ def nearby_stations_all():
             "lines": station['line'].split(' '),
             "latitude": station['latitude'],
             "longitude": station['longitude'],
-            "frequencies": dict(crime_categories_occurrences_per_station(station['id'], 365)),
-            # "percentile": round(station_percentile_rank((station['id'],), tuple(range(1,13)), 365)[0]['percentile'], 2),
-            "crimes": [
-                {
-                    "date": i["crime_date"],
-                    "category": i["category"],
-                    "ofns_desc": i["ofns_desc"],
-                    "pd_desc": i["pd_desc"],
-                    "latitude": i["latitude"],
-                    "longitude": i["longitude"]
-                } 
-                for i in crimes_near_station(station['id'], 365)
-            ]
+            "percentile": round(station_percentile_rank((station['id'],), tuple(range(1,13)), 365)[0]['percentile'], 2),
         }
         for station in stations
     ])
 
 def station_risk_percent():
-    station_ids = tuple( int(a) for a in request.args.getlist('id') )
+    station_ids = tuple( int(a) for a in request.args.getlist('station_ids') )
 
     crime_filters = tuple( int(a) for a in request.args.getlist('filter') )
     crime_filters = crime_filters if len(crime_filters) > 0 else tuple(range(1,13))

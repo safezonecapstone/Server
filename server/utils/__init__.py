@@ -31,7 +31,7 @@ def stations_within_half_mile(latitude: float, longitude: float) -> list:
         '''
         select t1.id, t1.name, t1.line, t1.latitude, t1.longitude from (
             select id, name, line, latitude, longitude, acos( sin( radians(:lat) ) * sin( radians(latitude) ) + cos( radians(:lat) ) * cos( radians(latitude) ) * cos( radians(:lon - longitude) ) ) * 3958.756 as distance from stations
-        ) as t1 where distance < 0.5
+        ) as t1 where distance < 0.5 order by distance
         '''
     )
 

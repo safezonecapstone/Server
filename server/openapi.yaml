@@ -110,15 +110,9 @@ paths:
                     longitude:
                       type: number
                       format: float
-                    frequencies:
-                      $ref: '#/components/schemas/Frequencies'
                     percentile:
                       type: number
                       format: float
-                    crimes:
-                      type: array
-                      items: 
-                        $ref: '#/components/schemas/Crime'
         401:
           $ref: '#/components/responses/UnauthorizedError'
 

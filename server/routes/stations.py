@@ -17,7 +17,7 @@ def nearby_stations_all():
         {
             "id": station['id'],
             "name": station['name'],
-            "lines": station['line'].split('-'),
+            "lines": station['line'].split(' '),
             "latitude": station['latitude'],
             "longitude": station['longitude'],
             "frequencies": dict(crime_categories_occurrences_per_station(station['id'], 365)),
@@ -51,7 +51,7 @@ def station_risk_percent():
         {
             "id": station['id'],
             "name": station['name'],
-            "lines": station['line'].split('-'),
+            "lines": station['line'].split(' '),
             "percentile": round(station[3], 2)
         }
         for station in stations

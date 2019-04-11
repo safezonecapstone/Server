@@ -24,7 +24,7 @@
 #     closest: list = five_closest_stations(lat_orig,lon_orig)
 #     half_mile: list = stations_within_half_mile(lat_orig,lon_orig)
 
-#     if len(half_mile) > len(five_closest)
+#     if len(half_mile) > len(closest)
 #     	stations = half_mile 
 #     else
 #     	stations = closest

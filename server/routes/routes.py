@@ -1,4 +1,4 @@
-# from flask import request, abort, jsonify
+from flask import request, abort, jsonify
 # from flask_googlemaps import GoogleMaps
 # from flask_googlemaps import Map
 # from server.models import db
@@ -7,10 +7,11 @@
 # from server.utils import five_closest_stations, station_percentile_rank, stations_within_half_mile
 
 
-# def directions(start_lat, start_long, stop_lat, stop_long):
+# def directions(start_lat, start_long, start_stn_lat, start_stn_long, stop_stn_lat, stop_stn_long, dest_lat, dest_long):
 # 	origin = "origin=" + start_lat + "," + start_long
-# 	destination = "destination=" + stop_lat + "," + stop_long 
-# 	parameters = origin + "&" + destination + "&" + api_key
+# 	destination = "destination=" + dest_lat + "," + dest_long 
+# 	waypoints = "waypoints=" + start_stn_lat + "," + start_stn_long + "|" + stop_stn_lat + "," + stop_stn_long 
+# 	parameters = origin + "&" + destination + "&" + waypoints + "&key=" + api_key
 # 	directions_url = "https://maps.googleapis.com/maps/api/directions/json?" + parameters
 # 	return directions_url
 
@@ -55,8 +56,7 @@
 #             dest_station = station
 
 #     # Output directions from origin -> destination 
-#     directions(lat_orig, lon_orig, orig_station.latitude, orig_station.longitude)
-#     directions(orig_station.latitude, orig_station.longitude, dest_station.latitude, dest_station.longitude)
-#     directions(dest_station.latitude, dest_station.longitude, lat_dest, lon_dest)
+#     directions(lat_orig, lon_orig, orig_station.latitude, orig_station.longitude, 
+#     	dest_station.latitude, dest_station.longitude, lat_dest, lon_dest)
 
 

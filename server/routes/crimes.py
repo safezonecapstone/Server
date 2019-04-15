@@ -1,10 +1,8 @@
 from flask import request, abort, jsonify
-from flask import jsonify
 from server.models import db
 from server.utils import crimes_near_point, Dates
 from sqlalchemy.sql import text, select, join
 from datetime import datetime, timedelta
-from typing import List
 
 def nearby_crimes_by_point():
 

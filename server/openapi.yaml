@@ -116,7 +116,7 @@ paths:
         401:
           $ref: '#/components/responses/UnauthorizedError'
 
-  /station/rank:
+  /stations/rank:
     get:
       parameters:
         - name: station_ids
@@ -170,6 +170,53 @@ paths:
                   percentile:
                     type: number
                     format: float
+        401: 
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /route:
+    get:
+      parameters:
+        - name: origin_latitude
+          in: query
+          required: true
+          description: Latitude of origin coordinate
+          schema:
+            type: number
+            format: float
+        - name: origin_longitude
+          in: query
+          required: true
+          description: Longitude of origin coordinate
+          schema:
+            type: number
+            format: float
+        - name: dest_latitude
+          in: query
+          required: true
+          description: Latitude of destination coordinate
+          schema:
+            type: number
+            format: float
+        - name: dest_longitude
+          in: query
+          required: true
+          description: Longitude of destination coordinate
+          schema:
+            type: number
+            format: float
+      operationId: server.routes.routes.route
+      tags:
+        - Routes
+      summary: Gives safe directions from a given origin coordinate to a destination coordinate
+      description: |
+        ## Steps
+      responses:
+        200:
+          description: A JSON consisting of steps
+          content:
+            application/json:
+              schema:
+                type: object
         401: 
           $ref: '#/components/responses/UnauthorizedError'
 

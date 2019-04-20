@@ -9,7 +9,7 @@ def route():
     origin     : str = 'origin={},{}'.format( origin_coord['latitude'], origin_coord['longitude'] )
     destination: str = 'destination={},{}'.format( dest_coord['latitude'], dest_coord['longitude'] )
     parameters : str = '{}&{}&key={}'.format( origin, destination, getenv('G_API_KEY') )
-    url        : str = 'https://maps.googleapis.com/maps/api/directions/json?{}'.format(parameters)
+    url        : str = 'https://maps.googleapis.com/maps/api/directions/json?{}&mode=transit'.format(parameters)
     return url
 
   # Find the safest close station

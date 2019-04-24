@@ -2,14 +2,14 @@
 
 After cloning the repo, in the folder execute these commands:
 
-- Be sure to have `virtualenv` installed for python
+- Be sure to have python3 installed
    
 ```
-virtualenv venv
+python3 -m venv venv
 
 source venv/bin/activate
 
-pip install -r requirements.txt
+pip3 (or pip) install -r requirements.txt
 ```
 
 ## Setting Environment Variables

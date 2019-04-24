@@ -1,8 +1,6 @@
-from flask import request, abort, jsonify
-from server.models import db
+from flask import request, jsonify
 from server.utils import crimes_near_point, Dates
-from sqlalchemy.sql import text, select, join
-from datetime import datetime, timedelta
+from server import db
 
 def nearby_crimes_by_point():
 
@@ -14,7 +12,7 @@ def nearby_crimes_by_point():
 
     time_range: int = Dates[request.args.get('timeSpan', 'year')]
 
-    results = crimes_near_point(lat, lon, crime_filter, time_range)
+    results = crimes_near_point(db, lat, lon, crime_filter, time_range)
 
     category_counts = {
         'Murder': 0,
@@ -34,15 +32,17 @@ def nearby_crimes_by_point():
     crimes = []
 
     for r in results:
-        crimes.append({
-            "date": r['crime_date'],
-            "category": r['category'],
-            "ofns_desc": r['ofns_desc'],
-            "pd_desc": r['pd_desc'],
-            "latitude": r['latitude'],
-            "longitude": r['longitude'],
-        })
-        category_counts[r[1]] += 1
+        crimes.append(
+            {
+                "date": r['crime_date'],
+                "category": r['category'],
+                "ofns_desc": r['ofns_desc'],
+                "pd_desc": r['pd_desc'],
+                "latitude": r['latitude'],
+                "longitude": r['longitude'],
+            }
+        )
+        category_counts[r['category']] += 1
 
     return jsonify(
         {

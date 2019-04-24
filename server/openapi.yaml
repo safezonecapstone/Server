@@ -38,7 +38,7 @@ paths:
           schema:
             $ref: '#/components/schemas/Time Range'
 
-      operationId: server.routes.crimes.nearby_crimes_by_point
+      operationId: server.controllers.crimes.nearby_crimes_by_point
       tags:
         - Crimes
       summary: List crime occurrences within 500ft of a coordinate
@@ -61,6 +61,47 @@ paths:
 
         401:
           $ref: '#/components/responses/UnauthorizedError'
+
+  /stations/nearby_crimes:
+    get:
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: 'Station id'
+          schema:
+            type: number
+            format: integer
+        - name: timeSpan
+          in: query
+          required: false
+          description: Time Span to filter Crime Occurences by
+          schema:
+            $ref: '#/components/schemas/Time Range'
+      operationId: server.controllers.stations.nearby_crimes_for_stations
+      tags:
+        - Stations
+      summary: List crime occurrences nearby subway stations
+      description: |
+        # Provide list of Crime Occurrences
+      responses: 
+        200:
+          description: A JSON consisting of an array of crime occurrences and the frequencies of each category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/Crime'
+                  frequencies: 
+                    $ref: '#/components/schemas/Frequencies'
+
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        
             
   /stations/nearby:
     get:
@@ -79,12 +120,12 @@ paths:
           schema:
             type: number
             format: float
-      operationId: server.routes.stations.nearby_stations_all
+      operationId: server.controllers.stations.nearby_stations_all
       tags: 
         - Stations
       summary: List Subway Stations that are within 1/2 mile of a coordinate or the five nearest stations
       description: | 
-        ## Provide list of nearby subway stations, its percentile, frequencies of crimes, and list of crime occurrences for each
+        ## Provide list of nearby subway stations and its percentile
       responses:
         200:
           description: A JSON array of Subway Stations
@@ -93,83 +134,42 @@ paths:
               schema: 
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: number
-                      format: integer
-                    name:
-                      type: string
-                    lines:
-                      type: array
-                      items:
-                        type: string
-                    latitude:
-                      type: number
-                      format: float
-                    longitude:
-                      type: number
-                      format: float
-                    percentile:
-                      type: number
-                      format: float
+                  $ref: '#/components/schemas/Station'
+                  
         401:
           $ref: '#/components/responses/UnauthorizedError'
 
-  /stations/rank:
+  /stations:
     get:
       parameters:
-        - name: station_ids
+        - name: name
+          in: query
+          required: true
+          description: Name of station
+          schema:
+            type: string
+        - name: line
           in: query
           required: false
-          description: Station IDs
+          description: Line of the train that runs in the station
           schema:
-            type: array
-            items:
-              type: number
-              minimum: 1
-              maximum: 473
-            uniqueItems: true
-            minItems: 1
-            maxItems: 473
-        - name: filter
-          in: query
-          required: false
-          description: Crime Categories to filter by
-          schema:
-            $ref: '#/components/schemas/Filter'
-        - name: timeSpan
-          in: query
-          required: false
-          description: Time Span to filter Crime Occurences by
-          schema:
-            $ref: '#/components/schemas/Time Range'
-      operationId: server.routes.stations.station_risk_percent
+            type: string
+      operationId: server.controllers.stations.get_station_by_name
       tags:
         - Stations
-      summary: Gives percentile ranking for subway stations based on given station ids or all stations if no ids are given
+      summary: Gives subway stations that match the given name and line
       description: |
         ## List of stations
       responses:
         200:
-          description: A JSON consisting of an subway stations with their percentile rank
+          description: A JSON array consisting of Subway Stations
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: number
-                    format: integer
-                  name:
-                    type: string
-                  lines:
-                    type: array
-                    items:
-                      type: string
-                  percentile:
-                    type: number
-                    format: float
+                type: array
+                items:
+                  $ref: '#/components/schemas/Station'
+                
         401: 
           $ref: '#/components/responses/UnauthorizedError'
 
@@ -204,19 +204,28 @@ paths:
           schema:
             type: number
             format: float
-      operationId: server.routes.routes.route
+      operationId: server.controllers.routes.route
       tags:
         - Routes
-      summary: Gives safe directions from a given origin coordinate to a destination coordinate
+      summary: Gives directions with safety ratings from a given origin coordinate to a destination coordinate
       description: |
         ## Steps
       responses:
         200:
-          description: A JSON consisting of steps
+          description: A JSON consisting of routes from the origin point to the destination point
           content:
             application/json:
               schema:
                 type: object
+                properties:
+                  data:
+                    type: object
+                  ratings:
+                    type: array
+                    items:
+                      type: number
+                      format: float
+                  
         401: 
           $ref: '#/components/responses/UnauthorizedError'
 
@@ -270,6 +279,27 @@ components:
           type: string
         pd_desc:
           type: string
+    Station:
+      type: object
+      properties:
+        id:
+          type: number
+          format: integer
+        name:
+          type: string
+        lines:
+          type: array
+          items:
+            type: string
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        percentile:
+          type: number
+          format: float
     Frequencies:
       type: object
       properties:

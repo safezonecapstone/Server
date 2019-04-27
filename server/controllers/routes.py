@@ -22,7 +22,11 @@ def route():
         'longitude': request.args.get('dest_longitude')
     }
 
-    data = get( directions(origin, destination) ).json()
+    gmap_request = get( directions(origin, destination) )
+
+    if gmap_request.status_code != 200: return 0, 400
+
+    data = gmap_request.json()
 
     ratings = []
 
@@ -32,11 +36,11 @@ def route():
             for k, s in enumerate(l['steps']):
                 if s['travel_mode'] == 'TRANSIT':
                     details = s['transit_details']
-                    from_station_name = details['departure_stop']['name']
-                    to_station_name = details['arrival_stop']['name']
+                    if details['line']['vehicle']['type'] != 'SUBWAY': continue
+                    from_station_name, to_station_name = details['departure_stop']['name'], details['arrival_stop']['name']
                     line = details['line']['short_name']
                     count, rating = count + 1, rating + ( get_station(db, from_station_name, line)[0]['percentile'] + get_station(db, to_station_name, line)[0]['percentile'] ) / 2
-        ratings.append( round(rating / count, 2) )
+        ratings.append( round(rating / count, 2) ) if count != 0 else ratings.append(0)
 
     # Output directions from origin -> destination
     return jsonify(

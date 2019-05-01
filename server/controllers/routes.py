@@ -28,7 +28,7 @@ def route():
 
     data = gmap_request.json()
 
-    ratings = []
+    routes = []
 
     for i, r in enumerate(data['routes']):
         count, rating = 0, 0
@@ -40,12 +40,8 @@ def route():
                     from_station_name, to_station_name = details['departure_stop']['name'], details['arrival_stop']['name']
                     line = details['line']['short_name']
                     count, rating = count + 1, rating + ( get_station(db, from_station_name, line)[0]['percentile'] + get_station(db, to_station_name, line)[0]['percentile'] ) / 2
-        ratings.append( round(rating / count, 2) ) if count != 0 else ratings.append(0)
+        routes.append({ 'leg': l, 'rating': round(rating / count, 2) if count != 0 else 0 })
 
+    routes.sort(key=lambda x: x['rating'], reverse=True)
     # Output directions from origin -> destination
-    return jsonify(
-        {
-            'data': data,
-            'ratings': ratings
-        }
-    )
+    return jsonify( routes )

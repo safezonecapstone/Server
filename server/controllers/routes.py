@@ -30,17 +30,18 @@ def route():
 
     routes = []
 
-    for i, r in enumerate(data['routes']):
-        count, rating = 0, 0
-        for j, l in enumerate(r['legs']):
-            for k, s in enumerate(l['steps']):
-                if s['travel_mode'] == 'TRANSIT':
-                    details = s['transit_details']
-                    if details['line']['vehicle']['type'] != 'SUBWAY': continue
-                    from_station_name, to_station_name = details['departure_stop']['name'], details['arrival_stop']['name']
-                    line = details['line']['short_name']
-                    count, rating = count + 1, rating + ( get_station(db, from_station_name, line)[0]['percentile'] + get_station(db, to_station_name, line)[0]['percentile'] ) / 2
-        routes.append({ 'leg': l, 'rating': round(rating / count, 2) if count != 0 else 0 })
+    rating = lambda details: ( get_station(db, details['departure_stop']['name'], details['line']['short_name'])[0]['percentile'] + 
+        get_station(db, details['arrival_stop']['name'], details['line']['short_name'])[0]['percentile'] ) / 2
+
+    for r in data['routes']:
+        for l in r['legs']:
+            ratings = [
+                rating(s['transit_details'])
+                for s in l['steps']
+                if s['travel_mode'] == 'TRANSIT'
+                if s['transit_details']['line']['vehicle']['type'] == 'SUBWAY'
+            ]
+            routes.append({ 'leg': l, 'rating': round( sum(ratings) / len(ratings), 2 ) })
 
     routes.sort(key=lambda x: x['rating'], reverse=True)
     # Output directions from origin -> destination

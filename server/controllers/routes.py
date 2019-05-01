@@ -28,20 +28,20 @@ def route():
 
     data = gmap_request.json()
 
-    routes = []
-
     rating = lambda details: ( get_station(db, details['departure_stop']['name'], details['line']['short_name'])[0]['percentile'] + 
         get_station(db, details['arrival_stop']['name'], details['line']['short_name'])[0]['percentile'] ) / 2
 
-    for r in data['routes']:
-        for l in r['legs']:
-            ratings = [
+    routes = [
+        { 'leg': l, 'rating': round( sum(ratings) / len(ratings), 2 ) }
+        for r in data['routes']
+        for l in r['legs']
+        for ratings in [ [
                 rating(s['transit_details'])
                 for s in l['steps']
                 if s['travel_mode'] == 'TRANSIT'
                 if s['transit_details']['line']['vehicle']['type'] == 'SUBWAY'
-            ]
-            routes.append({ 'leg': l, 'rating': round( sum(ratings) / len(ratings), 2 ) })
+            ] ]
+    ]
 
     routes.sort(key=lambda x: x['rating'], reverse=True)
     # Output directions from origin -> destination

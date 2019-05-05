@@ -48,7 +48,7 @@ def route():
                             }
                         )
             routes.append({
-                'rating': rating / count,
+                'rating': round( rating / count, 2 ),
                 'leg': leg,
                 'lines': lines
             })

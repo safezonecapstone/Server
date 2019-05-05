@@ -41,7 +41,12 @@ def route():
                     if step['transit_details']['line']['vehicle']['type'] == 'SUBWAY':
                         rating = rating + steps_rating(step['transit_details'])
                         count += 1
-                        lines.append(step['transit_details']['line']['short_name'])
+                        lines.append(
+                            { 
+                                'line': step['transit_details']['line']['short_name'], 
+                                'direction': 'Towards {}'.format(step['transit_details']['headsign'])
+                            }
+                        )
             routes.append({
                 'rating': rating / count,
                 'leg': leg,

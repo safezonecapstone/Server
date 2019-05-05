@@ -223,7 +223,12 @@ paths:
                     lines:
                       type: array
                       items:
-                        type: string
+                        type: object
+                        properties:
+                          line:
+                            type: string
+                          direction:
+                            type: string
                     leg: 
                       type: object
                     rating:

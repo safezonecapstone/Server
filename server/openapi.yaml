@@ -220,6 +220,10 @@ paths:
                 items:
                   type: object
                   properties:
+                    lines:
+                      type: array
+                      items:
+                        type: string
                     leg: 
                       type: object
                     rating:

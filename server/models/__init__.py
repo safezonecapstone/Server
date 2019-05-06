@@ -10,7 +10,7 @@ def create_db(test=False):
         'password': getenv('DB_PASS'),
         'database': getenv('DB_NAME'),
         'query': {
-            'unix_sock': getenv('DB_TEST_SOCKET_URL') if test else getenv('DB_SOCKET_URL')
+            'unix_sock': getenv('DB_SOCKET_URL')
         }
     }
 

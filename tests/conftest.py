@@ -5,5 +5,5 @@ from server.models import create_db
 
 @pytest.fixture
 def db():
-    return create_db(test=True)
+    return 0
 

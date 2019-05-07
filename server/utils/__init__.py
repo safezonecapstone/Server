@@ -16,12 +16,12 @@ def closest_stations(db, latitude: float, longitude: float) -> list:
         '''
         with station_ids as (
             select * from (
-                select id, name, line, latitude, longitude, acos( sin( radians(:lat) ) * sin( radians(latitude) ) + cos( radians(:lat) ) * cos( radians(latitude) ) * cos( radians(:lon - longitude) ) ) * 3958.756 as distance from stations order by distance limit 5
+                select id, name, line, latitude, longitude, ST_Distance( ST_MakePoint(longitude, latitude)::geography, ST_MakePoint(:lon, :lat)::geography) as distance from stations order by distance limit 5
             ) as t1 
             union
             select * from (
-                select id, name, line, latitude, longitude, acos( sin( radians(:lat) ) * sin( radians(latitude) ) + cos( radians(:lat) ) * cos( radians(latitude) ) * cos( radians(:lon - longitude) ) ) * 3958.756 as distance from stations
-            ) as t2 where t2.distance < 0.5
+                select id, name, line, latitude, longitude, ST_Distance( ST_MakePoint(longitude, latitude)::geography, ST_MakePoint(:lon, :lat)::geography) as distance from stations
+            ) as t2 where t2.distance < 152.4
         ),
         subquery as (
             select t7.id, coalesce(t7.sum, 0) as sum, t7.count from (

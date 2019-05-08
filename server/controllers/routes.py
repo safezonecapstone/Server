@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from server.utils import closest_stations, get_station
+from server.utils import closest_stations
 from server import db
 from os import getenv
 from requests import get
@@ -28,8 +28,8 @@ def route():
 
     data = gmap_request.json()
 
-    steps_rating = lambda details: ( get_station(db, details['departure_stop']['name'], details['line']['short_name'])[0]['percentile'] + 
-        get_station(db, details['arrival_stop']['name'], details['line']['short_name'])[0]['percentile'] ) / 2
+    steps_rating = lambda dest, arrive: ( closest_stations(db, dest['location']['lat'], dest['location']['lng'])[0]['percentile'] + 
+        closest_stations(db, arrive['location']['lat'], arrive['location']['lng'])[0]['percentile'] ) / 2
 
     routes = []
 
@@ -39,8 +39,9 @@ def route():
             for step in leg['steps']:
                 if step['travel_mode'] == 'TRANSIT':
                     if step['transit_details']['line']['vehicle']['type'] == 'SUBWAY':
-                        rating = rating + steps_rating(step['transit_details'])
-                        count += 1
+                        details = step['transit_details']
+                        departure_stop, arrival_stop = details['departure_stop'], details['arrival_stop']
+                        rating, count = rating + steps_rating(departure_stop, arrival_stop), count + 1
                         lines.append(
                             { 
                                 'line': step['transit_details']['line']['short_name'], 
@@ -48,7 +49,7 @@ def route():
                             }
                         )
             routes.append({
-                'rating': 1 - round( rating / count, 2 ) if count != 0 else 0,
+                'rating': round( rating / count, 2 ) if count != 0 else 0,
                 'leg': leg,
                 'lines': lines
             })

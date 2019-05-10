@@ -139,40 +139,6 @@ paths:
         401:
           $ref: '#/components/responses/UnauthorizedError'
 
-  /stations:
-    get:
-      parameters:
-        - name: name
-          in: query
-          required: true
-          description: Name of station
-          schema:
-            type: string
-        - name: line
-          in: query
-          required: false
-          description: Line of the train that runs in the station
-          schema:
-            type: string
-      operationId: server.controllers.stations.get_station_by_name
-      tags:
-        - Stations
-      summary: Gives subway stations that match the given name and line
-      description: |
-        ## List of stations
-      responses:
-        200:
-          description: A JSON array consisting of Subway Stations
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Station'
-                
-        401: 
-          $ref: '#/components/responses/UnauthorizedError'
-
   /route:
     get:
       parameters:

@@ -3,7 +3,6 @@ from flask import redirect
 import logging
 from connexion import FlaskApp
 from flask_cors import CORS
-from server.models import create_db
 
 def create_app():
     # Create Flask App and add OpenApi Documentation
@@ -13,19 +12,12 @@ def create_app():
     # Add CORS to Flask App
     CORS(app.app)
 
+    # Default Route
+    @app.route('/')
+    @app.route('/api')
+    def index():
+        return redirect('/api/ui')
+
     return app
 
-# Load Environment Variables
-load_dotenv('.flaskenv')
-load_dotenv('.env')
 
-db = create_db()
-app = create_app()
-
-logger = logging.getLogger()
-
-# Default Route
-@app.route('/')
-@app.route('/api')
-def index():
-    return redirect('/api/ui')

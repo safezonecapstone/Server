@@ -1,6 +1,6 @@
 from flask import request, jsonify
-from server.utils import closest_stations, crimes_near_station, get_station, Dates
-from server import db
+from server.utils import closest_stations, crimes_near_station, Dates
+from server.models import db
 
 def nearby_stations_all():
     lat: float = request.args.get('latitude')
@@ -63,24 +63,4 @@ def nearby_crimes_for_stations():
             'results': crimes,
             'frequencies': category_counts
         }
-    )
-
-def get_station_by_name():
-    name = request.args.get('name')
-    line = request.args.get('line', None)
-
-    stations = get_station(db, name, line)
-
-    return jsonify(
-        [
-            {
-                "id": station['id'],
-                "name": station['name'],
-                "lines": station['line'].split(' '),
-                "latitude": station['latitude'],
-                "longitude": station['longitude'],
-                "percentile": round(station['percentile'], 2),
-            }
-            for station in stations
-        ]
     )

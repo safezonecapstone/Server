@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from server.utils import closest_stations
-from server import db
+from server.models import db
 from os import getenv
 from requests import get
 

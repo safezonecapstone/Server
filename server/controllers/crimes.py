@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from server.utils import crimes_near_point, Dates
-from server import db
+from server.models import db
 
 def nearby_crimes_by_point():
 

@@ -192,12 +192,12 @@ paths:
       operationId: server.controllers.routes.route
       tags:
         - Routes
-      summary: Gives directions with safety ratings from a given origin coordinate to a destination coordinate
+      summary: Gives directions with safety ratings from a given origin to a destination
       description: |
         ## Steps
       responses:
         200:
-          description: A JSON consisting of routes from the origin point to the destination point
+          description: A JSON consisting of routes from the origin  to the destination
           content:
             application/json:
               schema:

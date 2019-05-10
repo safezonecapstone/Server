@@ -36,4 +36,4 @@ def db():
 
 @pytest.fixture
 def client():
-    app = create_app()
+    app = create_app('../')

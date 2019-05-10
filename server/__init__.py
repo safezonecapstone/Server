@@ -2,12 +2,13 @@ from dotenv import load_dotenv
 from flask import redirect
 import logging
 from connexion import FlaskApp
+from connexion.resolver import RestyResolver
 from flask_cors import CORS
 
-def create_app():
+def create_app(dir):
     # Create Flask App and add OpenApi Documentation
-    app = FlaskApp(__name__, specification_dir='./')
-    app.add_api('openapi.yaml')
+    app = FlaskApp(__name__)
+    app.add_api('openapi.yaml', resolver=RestyResolver('server'))
     
     # Add CORS to Flask App
     CORS(app.app)

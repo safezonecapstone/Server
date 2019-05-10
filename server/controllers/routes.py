@@ -5,15 +5,22 @@ from os import getenv
 from requests import get
 
 def route():
-    def directions(origin, destination) -> str:
-        origin     : str = f'origin={origin}'
-        destination: str = f'destination={destination}'
-        parameters : str = f'origin={origin}&destination={destination}&key={getenv("G_API_KEY")}'
-        url        : str = f'https://maps.googleapis.com/maps/api/directions/json?{parameters}&mode=transit&transit_mode=subway&alternatives=true'
+    def directions(origin_coord, dest_coord) -> str:
+        origin     : str = 'origin={},{}'.format( origin_coord['latitude'], origin_coord['longitude'] )
+        destination: str = 'destination={},{}'.format( dest_coord['latitude'], dest_coord['longitude'] )
+        parameters : str = '{}&{}&key={}'.format( origin, destination, getenv('G_API_KEY') )
+        url        : str = 'https://maps.googleapis.com/maps/api/directions/json?{}&mode=transit&transit_mode=subway&alternatives=true'.format(parameters)
         return url
     
-    origin = request.args.get('origin')
-    destination = request.args.get('destination')
+    origin = {
+        'latitude' : request.args.get('origin_latitude'),
+        'longitude': request.args.get('origin_longitude')
+    }
+
+    destination = {
+        'latitude' : request.args.get('dest_latitude'),
+        'longitude': request.args.get('dest_longitude')
+    }
 
     gmap_request = get( directions(origin, destination) )
 

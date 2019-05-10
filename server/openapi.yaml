@@ -176,18 +176,33 @@ paths:
   /route:
     get:
       parameters:
-        - name: origin
+        - name: origin_latitude
           in: query
           required: true
-          description: Name of Origin Location
+          description: Latitude of origin coordinate
           schema:
-            type: string
-        - name: destination
+            type: number
+            format: float
+        - name: origin_longitude
           in: query
           required: true
-          description: Name of Destination Location
+          description: Longitude of origin coordinate
           schema:
-            type: string
+            type: number
+            format: float
+        - name: dest_latitude
+          in: query
+          required: true
+          description: Latitude of destination coordinate
+          schema:
+            type: number
+            format: float
+        - name: dest_longitude
+          in: query
+          required: true
+          description: Longitude of destination coordinate
+          schema:
+            type: number
             format: float
       operationId: server.controllers.routes.route
       tags:

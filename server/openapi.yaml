@@ -142,43 +142,28 @@ paths:
   /route:
     get:
       parameters:
-        - name: origin_latitude
+        - name: origin
           in: query
           required: true
-          description: Latitude of origin coordinate
+          description: Name of Origin Location
           schema:
-            type: number
-            format: float
-        - name: origin_longitude
+            type: string
+        - name: destination
           in: query
           required: true
-          description: Longitude of origin coordinate
+          description: Name of Destination Location
           schema:
-            type: number
-            format: float
-        - name: dest_latitude
-          in: query
-          required: true
-          description: Latitude of destination coordinate
-          schema:
-            type: number
-            format: float
-        - name: dest_longitude
-          in: query
-          required: true
-          description: Longitude of destination coordinate
-          schema:
-            type: number
+            type: string
             format: float
       operationId: server.controllers.routes.route
       tags:
         - Routes
-      summary: Gives directions with safety ratings from a given origin coordinate to a destination coordinate
+      summary: Gives directions with safety ratings from a given origin to a destination
       description: |
         ## Steps
       responses:
         200:
-          description: A JSON consisting of routes from the origin point to the destination point
+          description: A JSON consisting of routes from the origin  to the destination
           content:
             application/json:
               schema:

@@ -7,3 +7,4 @@ cloud_sql_proxy
 *.pyc
 README.md
 .pytest_cache/
+tests/

@@ -133,7 +133,7 @@ paths:
         401:
           $ref: '#/components/responses/UnauthorizedError'
 
-  /route:
+  /route/:
     get:
       parameters:
         - name: origin_latitude

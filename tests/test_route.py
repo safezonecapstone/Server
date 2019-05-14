@@ -1,7 +1,7 @@
 from os import getenv
 
 def test_routes_endpoint(client):
-    res = client.get(f'/api/route?origin_latitude=40.768515&origin_longitude=-73.964461&dest_latitude=40.740699&dest_longitude=-73.983167&API_KEY={getenv("API_KEY")}')
+    res = client.get(f'/api/route/?origin_latitude=40.768515&origin_longitude=-73.964461&dest_latitude=40.740699&dest_longitude=-73.983167&API_KEY={getenv("API_KEY")}')
     assert '404' not in res.status
     assert '401' not in res.status
     data = res.get_json()

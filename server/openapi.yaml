@@ -25,12 +25,6 @@ paths:
           schema:
             type: number
             format: float
-        - name: filter
-          in: query
-          required: false
-          description: Crime Categories to filter by
-          schema:
-            $ref: '#/components/schemas/Filter'
         - name: timeSpan
           in: query
           required: false
@@ -139,40 +133,6 @@ paths:
         401:
           $ref: '#/components/responses/UnauthorizedError'
 
-  /stations:
-    get:
-      parameters:
-        - name: name
-          in: query
-          required: true
-          description: Name of station
-          schema:
-            type: string
-        - name: line
-          in: query
-          required: false
-          description: Line of the train that runs in the station
-          schema:
-            type: string
-      operationId: server.controllers.stations.get_station_by_name
-      tags:
-        - Stations
-      summary: Gives subway stations that match the given name and line
-      description: |
-        ## List of stations
-      responses:
-        200:
-          description: A JSON array consisting of Subway Stations
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Station'
-                
-        401: 
-          $ref: '#/components/responses/UnauthorizedError'
-
   /route:
     get:
       parameters:
@@ -253,15 +213,6 @@ components:
     UnauthorizedError:
       description: API key is missing or invalid
   schemas:
-    Filter:
-      type: array
-      items:
-        type: number
-        minimum: 1
-        maximum: 12
-      uniqueItems: true
-      minItems: 1
-      maxItems: 12
     Time Range:
       type: string
       enum:
@@ -271,6 +222,7 @@ components:
         - "6 month"
         - "9 month"
         - "year"
+      default: year
     Crime:
       type: object
       properties:

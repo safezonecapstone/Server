@@ -6,13 +6,9 @@ def nearby_crimes_by_point():
 
     lat: float = request.args.get('latitude')
     lon: float  = request.args.get('longitude')
-
-    crime_filter: tuple = tuple( int(a) for a in request.args.getlist('filter') )
-    crime_filter = crime_filter if len(crime_filter) > 0 else tuple(range(1,13))
-
     time_range: int = Dates[request.args.get('timeSpan', 'year')]
 
-    results = crimes_near_point(db, lat, lon, crime_filter, time_range)
+    results = crimes_near_point(db, lat, lon, time_range)
 
     category_counts = {
         'Murder': 0,

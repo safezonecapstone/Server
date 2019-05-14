@@ -1,9 +1,9 @@
 import pytest
-from sqlalchemy import create_engine, engine
-from os import getenv
-from server.models import create_db
+from server import create_app
+from dotenv import load_dotenv
+import subprocess
 
 @pytest.fixture
-def db():
-    return 0
-
+def client():
+    app = create_app()
+    yield app.app.test_client()

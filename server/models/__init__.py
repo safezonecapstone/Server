@@ -3,7 +3,7 @@ from os import getenv
 
 # Generate Google Cloud SQL connection pool
 
-def create_db(test=False):
+def create_db():
     URL = {
         'drivername': 'postgres+pg8000',
         'username': getenv('DB_USER'),

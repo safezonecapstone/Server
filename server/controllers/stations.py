@@ -2,6 +2,7 @@ from flask import request, jsonify
 from server.utils import closest_stations, crimes_near_station, Dates
 from server import db
 
+# Nearby Stations Endpoint
 def nearby_stations_all():
     lat: float = request.args.get('latitude')
     lon: float = request.args.get('longitude')
@@ -22,6 +23,7 @@ def nearby_stations_all():
         ]
     )
 
+# Nearby Crimes of a Station Endpoint
 def nearby_crimes_for_stations():
     station_id: int = request.args.get('id')
     time_range: int = Dates[request.args.get('timeSpan', 'year')]

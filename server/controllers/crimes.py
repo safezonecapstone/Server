@@ -2,6 +2,8 @@ from flask import request, jsonify
 from server.utils import crimes_near_point, Dates
 from server import db
 
+
+# Nearby Crimes Endpoint Function
 def nearby_crimes_by_point():
 
     lat: float = request.args.get('latitude')

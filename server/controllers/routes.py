@@ -4,6 +4,7 @@ from server import db
 from os import getenv
 from requests import get
 
+# Route Endpoint Function
 def route():
     def directions(origin_coord, dest_coord) -> str:
         origin     : str = 'origin={},{}'.format( origin_coord['latitude'], origin_coord['longitude'] )

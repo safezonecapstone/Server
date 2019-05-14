@@ -1,8 +1,7 @@
 from sqlalchemy import create_engine, engine
 from os import getenv
 
-# Generate Google Cloud SQL connection pool
-
+# Generate Google Cloud SQL Database connection pool
 def create_db():
     URL = {
         'drivername': 'postgres+pg8000',

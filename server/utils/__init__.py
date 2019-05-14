@@ -2,6 +2,7 @@ from sqlalchemy.sql import text
 from datetime import timedelta, datetime, date
 from typing import Dict
 
+# Dictionary to convert timeSpan values
 Dates: dict = {
     "week": 7,
     "month": 30,
@@ -11,6 +12,7 @@ Dates: dict = {
     "year": 365
 }
 
+# Given a Latitude and Longitude finds Subway Stations that are within a 1/4 mile and/or the five closest stations
 def closest_stations(db, latitude: float, longitude: float) -> list:
     query = text(
         '''
@@ -81,6 +83,8 @@ def closest_stations(db, latitude: float, longitude: float) -> list:
 
     return list(results)
 
+
+# Gives all Crime occurrences around a Subway Station within a certain range (DATES VALUE)
 def crimes_near_station(db, station_id: int, range: int) -> list:
     query = text(
         '''
@@ -103,6 +107,7 @@ def crimes_near_station(db, station_id: int, range: int) -> list:
     return list(results)
     
 
+# Gives all Crime occurrences around a given Coordinate within a certain range (DATES VALUE)
 def crimes_near_point(db, latitude: float, longitude: float, range: int) -> list:
 
     query = text(
@@ -121,107 +126,108 @@ def crimes_near_point(db, latitude: float, longitude: float, range: int) -> list
 
     return list(results)
 
-def station_percentile_rank(db, station_ids: tuple, categories: tuple, range: int) -> list:
+
+# # Gets the Percentile Rank of a subway station [ Not USED ANYMORE ]
+# def station_percentile_rank(db, station_ids: tuple, categories: tuple, range: int) -> list:
     
-    where_clause = 'WHERE t1.id = any(:s_id)' if len(station_ids) > 0 else ''
+#     where_clause = 'WHERE t1.id = any(:s_id)' if len(station_ids) > 0 else ''
     
-    query = text(
-        f'''
-         WITH subquery AS (
-            SELECT 
-                t7.id, t7.name, t7.line, coalesce(t7.sum, 0) as sum, t7.count 
-            FROM (
-                SELECT 
-                    t5.id, t5.name, t5.line, sum(t6.risk_points), count(t6.category) 
-                FROM stations AS t5 
-                LEFT JOIN (
-                    SELECT 
-                        * 
-                    FROM crimes_by_station AS t3 
-                    JOIN (
-                        SELECT 
-                            t1.category, t1.risk_points, t2.id 
-                        FROM crime_categories AS t1 
-                        JOIN crime_info AS t2 
-                        ON t1.id = t2.category_id
-                        WHERE t1.id = any(:cat) AND t2.crime_date > current_date - :range
-                    ) AS t4 
-                    ON t3.crime_id = t4.id
-                ) AS t6 
-                ON t5.id = t6.station_id 
-                GROUP BY t5.id
-            ) as t7
-        )
-        SELECT 
-            t1.id, t1.name, t1.line, 100 - (t1.sum / cast(t2.max as float) * 100) AS percentile 
-        FROM subquery AS t1 
-        JOIN (select max(coalesce(subquery.sum, 0)) from subquery) AS t2 
-        ON TRUE {where_clause} 
-        ORDER BY percentile 
-        '''
-    )
+#     query = text(
+#         f'''
+#          WITH subquery AS (
+#             SELECT 
+#                 t7.id, t7.name, t7.line, coalesce(t7.sum, 0) as sum, t7.count 
+#             FROM (
+#                 SELECT 
+#                     t5.id, t5.name, t5.line, sum(t6.risk_points), count(t6.category) 
+#                 FROM stations AS t5 
+#                 LEFT JOIN (
+#                     SELECT 
+#                         * 
+#                     FROM crimes_by_station AS t3 
+#                     JOIN (
+#                         SELECT 
+#                             t1.category, t1.risk_points, t2.id 
+#                         FROM crime_categories AS t1 
+#                         JOIN crime_info AS t2 
+#                         ON t1.id = t2.category_id
+#                         WHERE t1.id = any(:cat) AND t2.crime_date > current_date - :range
+#                     ) AS t4 
+#                     ON t3.crime_id = t4.id
+#                 ) AS t6 
+#                 ON t5.id = t6.station_id 
+#                 GROUP BY t5.id
+#             ) as t7
+#         )
+#         SELECT 
+#             t1.id, t1.name, t1.line, 100 - (t1.sum / cast(t2.max as float) * 100) AS percentile 
+#         FROM subquery AS t1 
+#         JOIN (select max(coalesce(subquery.sum, 0)) from subquery) AS t2 
+#         ON TRUE {where_clause} 
+#         ORDER BY percentile 
+#         '''
+#     )
     
-    with db.connect() as conn:
-        results = conn.execute(query, cat=categories, range=range, s_id=station_ids) if len(station_ids) > 0 else conn.execute(query, cat=categories, range=range).fetchall()
+#     with db.connect() as conn:
+#         results = conn.execute(query, cat=categories, range=range, s_id=station_ids) if len(station_ids) > 0 else conn.execute(query, cat=categories, range=range).fetchall()
 
-    return list(results)
+#     return list(results)
 
-# Give Crime Category IDs
-# For each station display occurences for given ids
 
-def crime_category_occurrence_all_stations(db, categories: tuple, range: int) -> list:
-    query = text(
-        '''
-        SELECT 
-            t7.id, t7.name, t7.line, t7.count 
-        FROM (
-            SELECT 
-                t5.id, t5.name, t5.line, sum(t6.risk_points), count(t6.category) 
-            FROM stations AS t5 
-            LEFT JOIN (
-                SELECT 
-                    * 
-                FROM crimes_by_station AS t3 
-                JOIN (
-                    SELECT 
-                        t1.category, t1.risk_points, t2.id 
-                    FROM crime_categories AS t1 
-                    JOIN crime_info AS t2 
-                    ON t1.id = t2.category_id 
-                    WHERE t1.id = any(:cat) AND t2.crime_date > current_date - :range
-                ) AS t4 
-                ON t3.crime_id = t4.id
-            ) AS t6 
-            ON t5.id = t6.station_id 
-            GROUP BY t5.id
-        ) as t7;
-        '''
-    )
 
-    with db.connect() as conn:
-        results = conn.execute(query, cat=categories, range=range).fetchall()
+# def crime_category_occurrence_all_stations(db, categories: tuple, range: int) -> list:
+#     query = text(
+#         '''
+#         SELECT 
+#             t7.id, t7.name, t7.line, t7.count 
+#         FROM (
+#             SELECT 
+#                 t5.id, t5.name, t5.line, sum(t6.risk_points), count(t6.category) 
+#             FROM stations AS t5 
+#             LEFT JOIN (
+#                 SELECT 
+#                     * 
+#                 FROM crimes_by_station AS t3 
+#                 JOIN (
+#                     SELECT 
+#                         t1.category, t1.risk_points, t2.id 
+#                     FROM crime_categories AS t1 
+#                     JOIN crime_info AS t2 
+#                     ON t1.id = t2.category_id 
+#                     WHERE t1.id = any(:cat) AND t2.crime_date > current_date - :range
+#                 ) AS t4 
+#                 ON t3.crime_id = t4.id
+#             ) AS t6 
+#             ON t5.id = t6.station_id 
+#             GROUP BY t5.id
+#         ) as t7;
+#         '''
+#     )
 
-    return list(results)
+#     with db.connect() as conn:
+#         results = conn.execute(query, cat=categories, range=range).fetchall()
 
-def crime_categories_occurrences_per_station(db, station_id: int, range: int) -> list:
-    query = text(
-        '''
-        SELECT
-            t3.category, coalesce(sum(t4.category_id) / t4.category_id, 0) AS occurrences 
-        FROM crime_categories AS t3 
-        LEFT JOIN (
-            SELECT 
-                t1.station_id, t2.category_id from crimes_by_station AS t1 
-            JOIN crime_info AS t2 
-            ON t1.crime_id = t2.id 
-            WHERE t1.station_id = :s_id AND t2.crime_date > current_date - :range
-        ) AS t4 
-        ON t3.id = t4.category_id 
-        GROUP BY t3.category, t4.category_id;
-        '''
-    )
+#     return list(results)
 
-    with db.connect() as conn:
-        results = conn.execute(query, s_id=station_id, range=range)
+# def crime_categories_occurrences_per_station(db, station_id: int, range: int) -> list:
+#     query = text(
+#         '''
+#         SELECT
+#             t3.category, coalesce(sum(t4.category_id) / t4.category_id, 0) AS occurrences 
+#         FROM crime_categories AS t3 
+#         LEFT JOIN (
+#             SELECT 
+#                 t1.station_id, t2.category_id from crimes_by_station AS t1 
+#             JOIN crime_info AS t2 
+#             ON t1.crime_id = t2.id 
+#             WHERE t1.station_id = :s_id AND t2.crime_date > current_date - :range
+#         ) AS t4 
+#         ON t3.id = t4.category_id 
+#         GROUP BY t3.category, t4.category_id;
+#         '''
+#     )
 
-    return list(results)
+#     with db.connect() as conn:
+#         results = conn.execute(query, s_id=station_id, range=range)
+
+#     return list(results)

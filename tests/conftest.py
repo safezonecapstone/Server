@@ -1,7 +1,6 @@
 import pytest
 from server import create_app
 from dotenv import load_dotenv
-import subprocess
 
 @pytest.fixture
 def client():

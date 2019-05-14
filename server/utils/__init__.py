@@ -115,7 +115,7 @@ def crimes_near_point(db, latitude: float, longitude: float, range: int) -> list
         SELECT 
             t1.crime_date, t2.category, t1.ofns_desc, t1.pd_desc, t1.latitude, t1.longitude 
         FROM (
-            select * from crime_info where current_data - :range
+            select * from crime_info where current_data > current_date - :range
         ) AS t1
         JOIN crime_categories AS t2 
         ON t1.category_id = t2.id 

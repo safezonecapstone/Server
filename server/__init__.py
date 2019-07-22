@@ -1,31 +1,40 @@
-from dotenv import load_dotenv
-from flask import redirect
-import logging
-from connexion import FlaskApp
+from flask import Flask, Blueprint, redirect
 from flask_cors import CORS
-from server.models import create_db
-from dotenv import load_dotenv
+from flask_restplus import Api, Resource
+from server.auth import authorizations
+from server.controllers.crimes import crimes_ns
+from server.controllers.routes import routes_ns
+from server.controllers.stations import stations_ns
+from server.utils.models import register_models
 
 def create_app():
 
-    # Create Flask App and add OpenApi Documentation
-    app = FlaskApp(__name__, specification_dir='./')
-    app.add_api('openapi.yaml')
-    
-    # Add CORS to Flask App
-    CORS(app.app)
+    app = Flask(__name__)
 
-    # Default Route
+    app.config['RESTPLUS_MASK_SWAGGER'] = False
+
+    blueprint = Blueprint('api', __name__, url_prefix='/api')
+
+    api = Api(
+        blueprint, 
+        version='1.0', 
+        title='SafeZone API', 
+        authorizations=authorizations,
+        doc='/ui/'
+    )
+
+    register_models(api)
+
+    app.register_blueprint(blueprint)
+
+    api.add_namespace(crimes_ns, '/crimes')
+    api.add_namespace(stations_ns, '/stations')
+    api.add_namespace(routes_ns, '/route')
+
     @app.route('/')
-    @app.route('/api')
     def index():
         return redirect('/api/ui')
-        
-    return app
-    
-# Load Environment Variables
-load_dotenv('.flaskenv')
-load_dotenv('.env')
 
-db = create_db()
-app = create_app()
+    CORS(app)
+
+    return app

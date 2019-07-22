@@ -4,6 +4,7 @@ def test_nearby_stations_endpoint(client):
     res = client.get(f'/api/stations/nearby?latitude=40.768515&longitude=-73.964461&API_KEY={getenv("API_KEY")}')
     assert '404' not in res.status
     assert '401' not in res.status
+    assert '400' not in res.status
     data = res.get_json()
     for d in data:
         assert 'id' in d
@@ -23,6 +24,7 @@ def test_nearby_crimes_station_endpoint(client):
     res = client.get(f'/api/stations/nearby_crimes?id=1&API_KEY={getenv("API_KEY")}')
     assert '404' not in res.status
     assert '401' not in res.status
+    assert '400' not in res.status
     data = res.get_json()
     assert 'frequencies' and 'results' in data
     assert type(data['frequencies']) == dict

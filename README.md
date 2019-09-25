@@ -1,5 +1,7 @@
 # Setup
 
+# Notice: Due to no longer having a billing account on Google Cloud Platform the server and website are no longer able to provide information
+
 After cloning the repo, in the folder execute these commands:
 
 - Be sure to have python3 installed
